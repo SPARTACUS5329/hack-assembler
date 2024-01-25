@@ -1,19 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define SIZE 200
+#include "assembler.h"
 #define MAX_LINES 500
 #define MAX_LINE_LENGTH 20
 static int lineCount = 0;
-
-typedef struct symbolTableItem {
-    int data;
-    int key;
-} symbol_table_item_t;
-
-symbol_table_item_t* symbolTable[SIZE];
-symbol_table_item_t* dummyItem;
-symbol_table_item_t* item;
 
 void error(const char *message) {
     perror(message);
@@ -123,27 +114,36 @@ void firstPass(char **lines) {
                 j++;
             }
             // Case "()"
-            if (j == 1) {
-                error("Enter a valid label symbol");
-            }
+            if (j == 1) error("Enter a valid label symbol");
             insert(symbol, i - symbolCount);
             symbolCount++;
         }
     }
 }
 
+void secondPass(char **lines) {
+    static int n = 16;
+    char *line;
+    for (int i = 0; i < lineCount; i++) {
+        line = lines[i];
+        if (line[0] == '@') {
+            const char *convertedInstruction = translateAInstruction(line);
+            printf("%s\n", convertedInstruction);
+        }
+    }
+}
+
 char* translateAInstruction(char *instruction){
-    printf("%s", instruction);
+    printf("Received instruction: %s\n", instruction);
     return instruction;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        error("File name not provided");
-    }
+    if (argc < 2) error("File name not provided");
     const char *fileName = argv[1];
     printf("\nAssembling %s...\n\n", fileName);
     char **lines = initialize(fileName);
     firstPass(lines);
+    secondPass(lines);
     return 0;
 }
