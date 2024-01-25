@@ -73,8 +73,15 @@ char** initialize(const char *fileName) {
     insert("R11", 11);
     insert("R12", 12);
     insert("R13", 13);
-    insert("R14", 13);
-    insert("R15", 13);
+    insert("R14", 14);
+    insert("R15", 15);
+    insert("SCREEN", 16384);
+    insert("KBD", 24576);
+    insert("SP", 0);
+    insert("LCL", 1);
+    insert("ARG", 2);
+    insert("THIS", 3);
+    insert("THAT", 4);
 
     FILE *file = fopen(fileName, "r");
     char **lines;
@@ -103,7 +110,26 @@ char** initialize(const char *fileName) {
 }
 
 void firstPass(char **lines) {
-    printf("lineCount: %d", lineCount);
+    char *line, *symbol = malloc(MAX_LINE_LENGTH * sizeof(char));
+    int symbolCount = 0;
+    for (int i = 0; i < lineCount; i++) {
+        line = lines[i];
+        if (line[0] == '(') {
+            int j = 1;
+            // Don't have to worry about j >= MAX_LINE_LENGTH
+            // This is accounted for while reading the file
+            while (line[j] != ')') {
+                symbol[j - 1] = line[j];
+                j++;
+            }
+            // Case "()"
+            if (j == 1) {
+                error("Enter a valid label symbol");
+            }
+            insert(symbol, i - symbolCount);
+            symbolCount++;
+        }
+    }
 }
 
 char* translateAInstruction(char *instruction){
