@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #define SIZE 200
+#define MAX_LINES 500
+#define MAX_LINE_LENGTH 20
+static int lineCount = 0;
 
 typedef struct symbolTableItem {
     int data;
@@ -55,7 +58,7 @@ void insert(char *key, int data) {
    symbolTable[hashIndex] = item;
 }
 
-void initialize() {
+char** initialize(const char *fileName) {
     insert("R0", 0);
     insert("R1", 1);
     insert("R2", 2);
@@ -72,34 +75,35 @@ void initialize() {
     insert("R13", 13);
     insert("R14", 13);
     insert("R15", 13);
+
+    FILE *file = fopen(fileName, "r");
+    char **lines;
+    char buffer[100];
+
+    if (lines == NULL) error("Memory allocation error");
+
+    lines = (char **)malloc(MAX_LINES * sizeof(char *));
+    for (int i = 0; i < MAX_LINES; i++) {
+        lines[i] = (char *)malloc(100 * sizeof(char));
+        if (lines[i] == NULL) error("Memory allocation error");
+    }
+
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        if (lineCount < MAX_LINES) {
+            size_t length = strlen(buffer);
+            if (buffer[length - 1] == '\n')
+                buffer[length - 1] = '\0';
+
+            strcpy(lines[lineCount], buffer);
+            lineCount++;
+        } else error("Too many lines in the file. Increase MAX_LINES.\n");
+    }
+
+    return lines;
 }
 
-void firstPass(const char *fileName) {
-    FILE *fp = fopen(fileName, "r");
-    char line[50];
-    char c;
-    int numberOfLines = 0, i = 0;
-    int flag = 1;
-    while (flag) {
-        c = getc(fp);
-        if (strcmp(&c, "\n") == 32) { // figure this out
-            printf("escn encountered %s\n", line);
-            // lines[numberOfLines] = &line[0];
-            i = 0;
-            numberOfLines++;
-        } else if (c == EOF) {
-            printf("EOF encountered %s\n", line);
-            // lines[numberOfLines] = &line[0];
-            i = 0;
-            numberOfLines++;
-            flag = 0;
-        }
-        else {
-            line[i] = c;
-            i++;
-            printf("%s\n", line);
-        }
-    }
+void firstPass(char **lines) {
+    printf("lineCount: %d", lineCount);
 }
 
 char* translateAInstruction(char *instruction){
@@ -113,8 +117,7 @@ int main(int argc, char *argv[]) {
     }
     const char *fileName = argv[1];
     printf("\nAssembling %s...\n\n", fileName);
-    initialize();
-    firstPass(fileName);
-    // printf("%s", lines[0]);
+    char **lines = initialize(fileName);
+    firstPass(lines);
     return 0;
 }
