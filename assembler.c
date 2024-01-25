@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include <stdbool.h>
 #include "assembler.h"
 #define MAX_LINES 500
 #define MAX_LINE_LENGTH 20
@@ -124,18 +126,64 @@ void firstPass(char **lines) {
 void secondPass(char **lines) {
     static int n = 16;
     char *line;
+    char *convertedInstruction;
     for (int i = 0; i < lineCount; i++) {
         line = lines[i];
         if (line[0] == '@') {
-            const char *convertedInstruction = translateAInstruction(line);
-            printf("%s\n", convertedInstruction);
+            convertedInstruction = translateAInstruction(line, n);
+            printf("convertedInstruction: %s\n", convertedInstruction);
         }
     }
 }
 
-char* translateAInstruction(char *instruction){
-    printf("Received instruction: %s\n", instruction);
+char* translateAInstruction(char *instruction, int n){
+    int binNum;
+    if (isNumeric(++instruction)) {
+        binNum = atoi(instruction);
+        binNum = decimal2Binary(binNum);
+    } else {
+        insert(instruction, n);
+        binNum = decimal2Binary(n);
+    }
+
+    char *binStr;
+    sprintf(binStr, "%d", binNum);
+    int binStrLength = strlen(binStr);
+    int numberOfPaddingZeros = 16 - binStrLength;
+    char *binInstruction = malloc(16 * sizeof(char));
+
+    for (int i = 0; i < 16; i++) {
+        if (i < numberOfPaddingZeros) {
+            binInstruction[i] = '0';
+        } else {
+            binInstruction[i] = binStr[i - numberOfPaddingZeros];
+        }
+    }
+
+    instruction = binInstruction;
     return instruction;
+}
+
+int decimal2Binary(int number) {
+    int remainder, convertedNumber = 0, iters = 0;
+    while (number) {
+        remainder = number % 2;
+        convertedNumber += remainder * pow(10, iters);
+        iters += 1;
+        number = number / 2;
+    }
+    return convertedNumber;
+}
+
+bool isNumeric(const char *str) {
+    if (*str == '\0') return false;
+    
+    while (*str != '\0') {
+        if (*str < '0' || *str > '9') return false;
+        str++;
+    }
+    
+    return true;
 }
 
 int main(int argc, char *argv[]) {
