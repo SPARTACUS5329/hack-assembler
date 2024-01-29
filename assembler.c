@@ -131,16 +131,22 @@ void secondPass(char **lines) {
         line = lines[i];
         if (line[0] == '@') {
             convertedInstruction = translateAInstruction(++line, n);
-            printf("convertedInstruction: %s\n", convertedInstruction);
+            printf("A Instruction: %s\n", convertedInstruction);
+        } else if (line[0] != '(') {
+            convertedInstruction = translateCInstruction(line);
+            printf("C Instruction: %s\n", convertedInstruction);
         }
     }
 }
 
 char* translateAInstruction(char *instruction, int n){
     int binNum;
+    hash_table_item_t *symbol;
     if (isNumeric(instruction)) {
         binNum = atoi(instruction);
         binNum = decimal2Binary(binNum);
+    } else if ((symbol = search(instruction, symbolTable)) != NULL) {
+        binNum = symbol->data;
     } else {
         insert(instruction, n, symbolTable);
         binNum = decimal2Binary(n);
@@ -162,6 +168,10 @@ char* translateAInstruction(char *instruction, int n){
 
     instruction = binInstruction;
     free(binInstruction);
+    return instruction;
+}
+
+char* translateCInstruction(char *instruction) {
     return instruction;
 }
 

@@ -19,5 +19,6 @@ char** initialize(const char*);
 void firstPass(char**);
 void secondPass(char**);
 char* translateAInstruction(char*, int);
+char* translateCInstruction(char*);
 int decimal2Binary(int);
 bool isNumeric(const char*);
