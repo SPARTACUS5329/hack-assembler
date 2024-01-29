@@ -1,19 +1,20 @@
 #pragma once
 #define SIZE 200
 
-typedef struct symbolTableItem {
+typedef struct hashTableItem {
     int data;
     int key;
-} symbol_table_item_t;
+} hash_table_item_t;
 
-symbol_table_item_t* symbolTable[SIZE];
-symbol_table_item_t* dummyItem;
-symbol_table_item_t* item;
+hash_table_item_t* symbolTable[SIZE];
+hash_table_item_t* referenceTable[50];
+hash_table_item_t* dummyItem;
+hash_table_item_t* item;
 
 void error(const char*);
 unsigned long hash(char*);
-symbol_table_item_t* search(char*);
-void insert(char*, int);
+hash_table_item_t* search(char*, hash_table_item_t* hashTable[]);
+void insert(char*, int, hash_table_item_t* hashTable[]);
 char** initialize(const char*);
 void firstPass(char**);
 void secondPass(char**);
