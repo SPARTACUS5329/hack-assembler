@@ -1,6 +1,9 @@
 (Hello1)
 How are you
 (Hello2)
-@21
+@1
+@2
+@6
 @Hello1
+@7
 What are you doing

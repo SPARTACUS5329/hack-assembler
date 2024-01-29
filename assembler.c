@@ -130,7 +130,7 @@ void secondPass(char **lines) {
     for (int i = 0; i < lineCount; i++) {
         line = lines[i];
         if (line[0] == '@') {
-            convertedInstruction = translateAInstruction(line, n);
+            convertedInstruction = translateAInstruction(++line, n);
             printf("convertedInstruction: %s\n", convertedInstruction);
         }
     }
@@ -138,7 +138,7 @@ void secondPass(char **lines) {
 
 char* translateAInstruction(char *instruction, int n){
     int binNum;
-    if (isNumeric(++instruction)) {
+    if (isNumeric(instruction)) {
         binNum = atoi(instruction);
         binNum = decimal2Binary(binNum);
     } else {
@@ -146,7 +146,7 @@ char* translateAInstruction(char *instruction, int n){
         binNum = decimal2Binary(n);
     }
 
-    char *binStr;
+    char binStr[MAX_LINE_LENGTH];
     sprintf(binStr, "%d", binNum);
     int binStrLength = strlen(binStr);
     int numberOfPaddingZeros = 16 - binStrLength;
@@ -161,6 +161,7 @@ char* translateAInstruction(char *instruction, int n){
     }
 
     instruction = binInstruction;
+    free(binInstruction);
     return instruction;
 }
 
