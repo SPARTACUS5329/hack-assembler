@@ -224,6 +224,64 @@ char* translateAInstruction(char *instruction, int n){
 }
 
 char* translateCInstruction(char *instruction) {
+    char dest[5], comp[5], jump[5];
+
+    char *equals_sign = strchr(instruction, '=');
+    char *semicolon = strchr(instruction, ';');
+    
+    // Check if '=' and ';' exist
+    if (equals_sign == NULL || semicolon == NULL)
+        error("Invalid C-instruction format!");
+    
+    // dest
+    strncpy(dest, instruction, equals_sign - instruction);
+    dest[equals_sign - instruction] = '\0';
+    
+    // comp
+    strncpy(comp, equals_sign + 1, semicolon - equals_sign - 1);
+    comp[semicolon - equals_sign - 1] = '\0';
+    
+    // jump
+    strcpy(jump, semicolon + 1);
+    jump[strcspn(jump, "\n")] = '\0';
+
+    printf("%s, %s, %s\n", dest, comp, jump);
+
+    hash_table_item_t *destItem = search(dest, destTable);
+    hash_table_item_t *compItem = search(comp, compTable);
+    hash_table_item_t *jumpItem = search(jump, jumpTable);
+
+    if (destItem == NULL) error("Syntax error. Destination statement not found!");
+    if (compItem == NULL) error("Syntax error. Jump statement not found!");
+    if (jumpItem == NULL) error("Syntax error. Computation statement not found!");
+
+    int binDest = destItem->data;
+    int compDest = compItem->data;
+    int jumpDest = jumpItem->data;
+
+    char binDestStr[4], binCompStr[4], binJumpStr[4];
+    sprintf(binDestStr, "%d", binDest);
+    sprintf(binCompStr, "%d", compDest);
+    sprintf(binJumpStr, "%d", jumpDest);
+
+    char *binDestPtr = leftPad(binDestStr, '0', 3);
+    char *binCompPtr = leftPad(binCompStr, '0', 7);
+    char *binJumpPtr = leftPad(binJumpStr, '0', 3);
+
+    char *binInstruction = malloc(16 * sizeof(char));
+
+    for (int i = 0; i < 13; i++) {
+        if (i < 7) binInstruction[i] = binCompPtr[i];
+        else if (i < 10) binInstruction[i] = binDestPtr[i - 7];
+        else binInstruction[i] = binJumpPtr[i - 10];
+    }
+
+    binInstruction = leftPad(binInstruction, '1', 16);
+    instruction = binInstruction;
+    free(binInstruction);
+    free(dest);
+    free(comp);
+    free(jump);
     return instruction;
 }
 
@@ -247,6 +305,20 @@ bool isNumeric(const char *str) {
     }
     
     return true;
+}
+
+char* leftPad(char *instruction, char pad, int finalLength) {
+    char *newInstruction = malloc(finalLength * sizeof(char));
+    int length = strlen(instruction);
+    for (int i = 0; i < finalLength; i++) {
+        if (i < finalLength - length)
+            newInstruction[i] = pad;
+        else
+            newInstruction[i] = instruction[i - (finalLength - length)];
+    }
+    instruction = newInstruction;
+    free(newInstruction);
+    return instruction;
 }
 
 int main(int argc, char *argv[]) {

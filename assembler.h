@@ -8,8 +8,8 @@ typedef struct hashTableItem {
 
 hash_table_item_t* symbolTable[SIZE];
 hash_table_item_t* compTable[50];
-hash_table_item_t* destTable[50];
-hash_table_item_t* jumpTable[50];
+hash_table_item_t* destTable[8];
+hash_table_item_t* jumpTable[8];
 hash_table_item_t* dummyItem;
 hash_table_item_t* item;
 
@@ -24,3 +24,4 @@ char* translateAInstruction(char*, int);
 char* translateCInstruction(char*);
 int decimal2Binary(int);
 bool isNumeric(const char*);
+char* leftPad(char*, char, int);
