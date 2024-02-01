@@ -51,6 +51,58 @@ void insert(char *key, int data, hash_table_item_t* hashTable[]) {
    hashTable[hashIndex] = item;
 }
 
+void preInitialize() {
+    // List of possible computations
+    insert("0", 101010, compTable);
+    insert("1", 111111, compTable);
+    insert("-1", 111010, compTable);
+    insert("D", 001100, compTable);
+    insert("A", 110000, compTable);
+    insert("!D", 001101, compTable);
+    insert("!A", 110001, compTable);
+    insert("-D", 001111, compTable);
+    insert("-A", 110011, compTable);
+    insert("D+1", 011111, compTable);
+    insert("A+1", 110111, compTable);
+    insert("D-1", 001110, compTable);
+    insert("A-1", 110010, compTable);
+    insert("D+A", 000010, compTable);
+    insert("D-A", 010011, compTable);
+    insert("A-D", 000111, compTable);
+    insert("D&A", 000000, compTable);
+    insert("D|A", 010101, compTable);
+    insert("M", 1110000, compTable);
+    insert("!M", 1110001, compTable);
+    insert("-M", 1110011, compTable);
+    insert("M+1", 1110111, compTable);
+    insert("M-1", 1110010, compTable);
+    insert("D+M", 1000010, compTable);
+    insert("D-M", 1010011, compTable);
+    insert("M-D", 1000111, compTable);
+    insert("D&M", 1000000, compTable);
+    insert("D|M", 1010101, compTable);
+
+    // List of possible destinations
+    insert("null", 000, destTable);
+    insert("M", 001, destTable);
+    insert("D", 010, destTable);
+    insert("MD", 011, destTable);
+    insert("A", 100, destTable);
+    insert("AM", 101, destTable);
+    insert("AD", 110, destTable);
+    insert("AMD", 111, destTable);
+
+    // List of possible jumps
+    insert("null", 000, jumpTable);
+    insert("JGT", 001, jumpTable);
+    insert("JEQ", 010, jumpTable);
+    insert("JGE", 011, jumpTable);
+    insert("JLT", 100, jumpTable);
+    insert("JNE", 101, jumpTable);
+    insert("JLE", 110, jumpTable);
+    insert("JMP", 111, jumpTable);
+}
+
 char** initialize(const char *fileName) {
     insert("R0", 0, symbolTable);
     insert("R1", 1, symbolTable);
@@ -201,6 +253,7 @@ int main(int argc, char *argv[]) {
     if (argc < 2) error("File name not provided");
     const char *fileName = argv[1];
     printf("\nAssembling %s...\n\n", fileName);
+    preInitialize();
     char **lines = initialize(fileName);
     firstPass(lines);
     secondPass(lines);

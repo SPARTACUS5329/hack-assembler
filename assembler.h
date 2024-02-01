@@ -7,7 +7,9 @@ typedef struct hashTableItem {
 } hash_table_item_t;
 
 hash_table_item_t* symbolTable[SIZE];
-hash_table_item_t* referenceTable[50];
+hash_table_item_t* compTable[50];
+hash_table_item_t* destTable[50];
+hash_table_item_t* jumpTable[50];
 hash_table_item_t* dummyItem;
 hash_table_item_t* item;
 
