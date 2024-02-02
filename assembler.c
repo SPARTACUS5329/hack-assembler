@@ -276,9 +276,8 @@ char* translateCInstruction(char *instruction) {
     }
 
     binInstruction = leftPad(binInstruction, '1', 16);
-    printf("binInstruction: %s\n", binInstruction);
     instruction = binInstruction;
-    free(binInstruction);
+    // free(binInstruction);
     return instruction;
 }
 
