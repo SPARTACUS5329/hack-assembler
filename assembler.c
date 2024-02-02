@@ -245,21 +245,20 @@ char* translateCInstruction(char *instruction) {
     strcpy(jump, semicolon + 1);
     jump[strcspn(jump, "\n")] = '\0';
 
-    printf("%s, %s, %s\n", dest, comp, jump);
-
     hash_table_item_t *destItem = search(dest, destTable);
     hash_table_item_t *compItem = search(comp, compTable);
     hash_table_item_t *jumpItem = search(jump, jumpTable);
 
     if (destItem == NULL) error("Syntax error. Destination statement not found!");
-    if (compItem == NULL) error("Syntax error. Jump statement not found!");
-    if (jumpItem == NULL) error("Syntax error. Computation statement not found!");
+    if (compItem == NULL) error("Syntax error. Computation statement not found!");
+    if (jumpItem == NULL) error("Syntax error. Jump statement not found!");
 
     int binDest = destItem->data;
     int compDest = compItem->data;
     int jumpDest = jumpItem->data;
 
-    char binDestStr[4], binCompStr[4], binJumpStr[4];
+    char binDestStr[MAX_LINE_LENGTH], binCompStr[MAX_LINE_LENGTH], binJumpStr[MAX_LINE_LENGTH];
+
     sprintf(binDestStr, "%d", binDest);
     sprintf(binCompStr, "%d", compDest);
     sprintf(binJumpStr, "%d", jumpDest);
@@ -277,11 +276,9 @@ char* translateCInstruction(char *instruction) {
     }
 
     binInstruction = leftPad(binInstruction, '1', 16);
+    printf("binInstruction: %s\n", binInstruction);
     instruction = binInstruction;
     free(binInstruction);
-    free(dest);
-    free(comp);
-    free(jump);
     return instruction;
 }
 
@@ -326,6 +323,9 @@ int main(int argc, char *argv[]) {
     const char *fileName = argv[1];
     printf("\nAssembling %s...\n\n", fileName);
     preInitialize();
+    hash_table_item_t *jumpItem = search("null", jumpTable);
+    if (jumpItem == NULL) printf("Item is NULL\n");
+    else printf("jumpItem: %d\n", jumpItem->data);
     char **lines = initialize(fileName);
     firstPass(lines);
     secondPass(lines);

@@ -8,8 +8,8 @@ typedef struct hashTableItem {
 
 hash_table_item_t* symbolTable[SIZE];
 hash_table_item_t* compTable[50];
-hash_table_item_t* destTable[8];
-hash_table_item_t* jumpTable[8];
+hash_table_item_t* destTable[20];
+hash_table_item_t* jumpTable[20];
 hash_table_item_t* dummyItem;
 hash_table_item_t* item;
 
