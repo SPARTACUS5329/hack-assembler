@@ -183,29 +183,29 @@ void secondPass(char **lines) {
         line = lines[i];
         if (line[0] == '@') {
             convertedInstruction = translateAInstruction(++line, n);
-            printf("A Instruction: %s\n", convertedInstruction);
+            printf("Line %d: A Instruction: %s\n", i + 1, convertedInstruction);
         } else if (line[0] != '(') {
             convertedInstruction = translateCInstruction(line);
-            printf("C Instruction: %s\n", convertedInstruction);
+            printf("Line %d: C Instruction: %s\n", i + 1, convertedInstruction);
         }
     }
 }
 
 char* translateAInstruction(char *instruction, int n){
-    int binNum;
+    long int binNum;
     hash_table_item_t *symbol;
     if (isNumeric(instruction)) {
         binNum = atoi(instruction);
         binNum = decimal2Binary(binNum);
     } else if ((symbol = search(instruction, symbolTable)) != NULL) {
-        binNum = symbol->data;
+        binNum = decimal2Binary(symbol->data);
     } else {
         insert(instruction, n, symbolTable);
         binNum = decimal2Binary(n);
     }
 
     char binStr[MAX_LINE_LENGTH];
-    sprintf(binStr, "%d", binNum);
+    sprintf(binStr, "%ld", binNum);
     int binStrLength = strlen(binStr);
     int numberOfPaddingZeros = 16 - binStrLength;
     char *binInstruction = malloc(16 * sizeof(char));
@@ -281,8 +281,9 @@ char* translateCInstruction(char *instruction) {
     return instruction;
 }
 
-int decimal2Binary(int number) {
-    int remainder, convertedNumber = 0, iters = 0;
+long int decimal2Binary(int number) {
+    int remainder, iters = 0;
+    long int convertedNumber = 0;
     while (number) {
         remainder = number % 2;
         convertedNumber += remainder * pow(10, iters);
@@ -322,9 +323,6 @@ int main(int argc, char *argv[]) {
     const char *fileName = argv[1];
     printf("\nAssembling %s...\n\n", fileName);
     preInitialize();
-    hash_table_item_t *jumpItem = search("null", jumpTable);
-    if (jumpItem == NULL) printf("Item is NULL\n");
-    else printf("jumpItem: %d\n", jumpItem->data);
     char **lines = initialize(fileName);
     firstPass(lines);
     secondPass(lines);
