@@ -29,7 +29,7 @@ void insertKeyword(char*, int, lookup_table_item_t* hashTable[], int);
 void preInitialize();
 char** initialize(const char*);
 void firstPass(char**);
-void secondPass(char**);
+char** secondPass(char**);
 char* translateAInstruction(char*, int);
 char* translateCInstruction(char*);
 long int decimal2Binary(int);
