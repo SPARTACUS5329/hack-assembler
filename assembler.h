@@ -34,4 +34,4 @@ char* translateAInstruction(char*, int);
 char* translateCInstruction(char*);
 long int decimal2Binary(int);
 bool isNumeric(const char*);
-char* leftPad(char*, char, int);
+char* leftPad(const char*, char, int);

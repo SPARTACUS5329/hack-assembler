@@ -291,13 +291,9 @@ char* translateCInstruction(char *instruction) {
     sprintf(binCompStr, "%d", binComp);
     sprintf(binJumpStr, "%d", binJump);
 
-    printf("%s %s %s\n", binDestStr, binCompStr, binJumpStr);
-
     char *binDestPtr = leftPad(binDestStr, '0', 3);
     char *binCompPtr = leftPad(binCompStr, '0', 7);
     char *binJumpPtr = leftPad(binJumpStr, '0', 3);
-
-    printf("%s %s %s\n", binDestPtr, binCompPtr, binJumpPtr);
 
     char *binInstruction = malloc(16 * sizeof(char));
 
@@ -309,7 +305,6 @@ char* translateCInstruction(char *instruction) {
 
     binInstruction = leftPad(binInstruction, '1', 16);
     instruction = binInstruction;
-    // free(binInstruction);
     return instruction;
 }
 
@@ -336,18 +331,18 @@ bool isNumeric(const char *str) {
     return true;
 }
 
-char* leftPad(char *instruction, char pad, int finalLength) {
-    char *newInstruction = malloc(finalLength * sizeof(char));
-    int length = strlen(instruction);
-    for (int i = 0; i < finalLength; i++) {
-        if (i < finalLength - length)
-            newInstruction[i] = pad;
-        else
-            newInstruction[i] = instruction[i - (finalLength - length)];
-    }
-    instruction = newInstruction;
-    free(newInstruction);
-    return instruction;
+char* leftPad(const char* instruction, char padCharacter, int finalLength) {
+    int instructionLength = strlen(instruction);
+
+    if (instructionLength >= finalLength) return strdup(instruction);
+
+    int paddingLength = finalLength - instructionLength;
+    char* paddedInstruction = malloc((finalLength + 1) * sizeof(char)); // +1 for the null terminator
+
+    memset(paddedInstruction, padCharacter, paddingLength);
+    strcpy(paddedInstruction + paddingLength, instruction);
+
+    return paddedInstruction;
 }
 
 int main(int argc, char *argv[]) {
