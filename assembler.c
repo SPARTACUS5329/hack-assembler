@@ -84,21 +84,21 @@ void preInitialize() {
     insertKeyword("0", 101010, compTable, COMP_TABLE_SIZE);
     insertKeyword("1", 111111, compTable, COMP_TABLE_SIZE);
     insertKeyword("-1", 111010, compTable, COMP_TABLE_SIZE);
-    insertKeyword("D", 001100, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D", 1100, compTable, COMP_TABLE_SIZE);
     insertKeyword("A", 110000, compTable, COMP_TABLE_SIZE);
-    insertKeyword("!D", 001101, compTable, COMP_TABLE_SIZE);
+    insertKeyword("!D", 1101, compTable, COMP_TABLE_SIZE);
     insertKeyword("!A", 110001, compTable, COMP_TABLE_SIZE);
-    insertKeyword("-D", 001111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("-D", 1111, compTable, COMP_TABLE_SIZE);
     insertKeyword("-A", 110011, compTable, COMP_TABLE_SIZE);
-    insertKeyword("D+1", 011111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D+1", 11111, compTable, COMP_TABLE_SIZE);
     insertKeyword("A+1", 110111, compTable, COMP_TABLE_SIZE);
-    insertKeyword("D-1", 001110, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D-1", 1110, compTable, COMP_TABLE_SIZE);
     insertKeyword("A-1", 110010, compTable, COMP_TABLE_SIZE);
-    insertKeyword("D+A", 000010, compTable, COMP_TABLE_SIZE);
-    insertKeyword("D-A", 010011, compTable, COMP_TABLE_SIZE);
-    insertKeyword("A-D", 000111, compTable, COMP_TABLE_SIZE);
-    insertKeyword("D&A", 000000, compTable, COMP_TABLE_SIZE);
-    insertKeyword("D|A", 010101, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D+A", 10, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D-A", 10011, compTable, COMP_TABLE_SIZE);
+    insertKeyword("A-D", 111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D&A", 0, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D|A", 10101, compTable, COMP_TABLE_SIZE);
     insertKeyword("M", 1110000, compTable, COMP_TABLE_SIZE);
     insertKeyword("!M", 1110001, compTable, COMP_TABLE_SIZE);
     insertKeyword("-M", 1110011, compTable, COMP_TABLE_SIZE);
@@ -111,20 +111,20 @@ void preInitialize() {
     insertKeyword("D|M", 1010101, compTable, COMP_TABLE_SIZE);
 
     // List of possible destinations
-    insertKeyword("null", 000, destTable, DEST_TABLE_SIZE);
-    insertKeyword("M", 001, destTable, DEST_TABLE_SIZE);
-    insertKeyword("D", 010, destTable, DEST_TABLE_SIZE);
-    insertKeyword("MD", 011, destTable, DEST_TABLE_SIZE);
+    insertKeyword("null", 0, destTable, DEST_TABLE_SIZE);
+    insertKeyword("M", 1, destTable, DEST_TABLE_SIZE);
+    insertKeyword("D", 10, destTable, DEST_TABLE_SIZE);
+    insertKeyword("MD", 11, destTable, DEST_TABLE_SIZE);
     insertKeyword("A", 100, destTable, DEST_TABLE_SIZE);
     insertKeyword("AM", 101, destTable, DEST_TABLE_SIZE);
     insertKeyword("AD", 110, destTable, DEST_TABLE_SIZE);
     insertKeyword("AMD", 111, destTable, DEST_TABLE_SIZE);
 
     // List of possible jumps
-    insertKeyword("null", 000, jumpTable, JUMP_TABLE_SIZE);
-    insertKeyword("JGT", 001, jumpTable, JUMP_TABLE_SIZE);
-    insertKeyword("JEQ", 010, jumpTable, JUMP_TABLE_SIZE);
-    insertKeyword("JGE", 011, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("null", 0, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JGT", 1, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JEQ", 10, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JGE", 11, jumpTable, JUMP_TABLE_SIZE);
     insertKeyword("JLT", 100, jumpTable, JUMP_TABLE_SIZE);
     insertKeyword("JNE", 101, jumpTable, JUMP_TABLE_SIZE);
     insertKeyword("JLE", 110, jumpTable, JUMP_TABLE_SIZE);
@@ -282,18 +282,22 @@ char* translateCInstruction(char *instruction) {
     if (jumpItem == NULL) error("Syntax error. Jump statement not found!");
 
     int binDest = destItem->data;
-    int compDest = compItem->data;
-    int jumpDest = jumpItem->data;
+    int binComp = compItem->data;
+    int binJump = jumpItem->data;
 
     char binDestStr[MAX_LINE_LENGTH], binCompStr[MAX_LINE_LENGTH], binJumpStr[MAX_LINE_LENGTH];
 
     sprintf(binDestStr, "%d", binDest);
-    sprintf(binCompStr, "%d", compDest);
-    sprintf(binJumpStr, "%d", jumpDest);
+    sprintf(binCompStr, "%d", binComp);
+    sprintf(binJumpStr, "%d", binJump);
+
+    printf("%s %s %s\n", binDestStr, binCompStr, binJumpStr);
 
     char *binDestPtr = leftPad(binDestStr, '0', 3);
     char *binCompPtr = leftPad(binCompStr, '0', 7);
     char *binJumpPtr = leftPad(binJumpStr, '0', 3);
+
+    printf("%s %s %s\n", binDestPtr, binCompPtr, binJumpPtr);
 
     char *binInstruction = malloc(16 * sizeof(char));
 
