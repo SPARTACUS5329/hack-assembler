@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 (Hello1)
 How are you
 (Hello2)
@@ -7,3 +8,46 @@ How are you
 @Hello1
 @7
 What are you doing
+=======
+@status
+M=-1;null
+D=0;null
+@SETSCREEN
+null=0;JMP
+(LOOP)
+@KBD
+D=M;null
+@SETSCREEN
+null=D;JEQ
+D=-1;null
+(SETSCREEN)
+@ARG
+M=D;null
+@status
+D=D-M;null
+@LOOP
+null=D;JEQ
+@ARG
+D=M;null
+@status
+M=D;null
+@SCREEN
+D=A;null
+@8192
+D=D+A;null
+@i
+M=D;null
+(SETLOOP)
+@i
+D=M-1;null
+M=D;null
+@LOOP
+null=D;JLT
+@status
+D=M;null
+@i
+A=M;null
+M=D;null
+@SETLOOP
+null=0;JMP
+>>>>>>> c-instructions
