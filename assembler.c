@@ -203,20 +203,21 @@ void firstPass(char **lines) {
     }
 }
 
-void secondPass(char **lines) {
+char** secondPass(char **lines) {
     static int n = 16;
     char *line;
     char *convertedInstruction;
+    char **binInstructionSet = malloc(lineCount * sizeof(char *));
     for (int i = 0; i < lineCount; i++) {
+        binInstructionSet[i] = malloc(MAX_LINE_LENGTH * sizeof(char));
         line = lines[i];
-        if (line[0] == '@') {
+        if (line[0] == '@')
             convertedInstruction = translateAInstruction(++line, n);
-            printf("Line %d: A Instruction: %s\n", i + 1, convertedInstruction);
-        } else if (line[0] != '(') {
+        else if (line[0] != '(')
             convertedInstruction = translateCInstruction(line);
-            printf("Line %d: C Instruction: %s\n", i + 1, convertedInstruction);
-        }
+        strncpy(binInstructionSet[i], convertedInstruction, 16);
     }
+    return binInstructionSet;
 }
 
 char* translateAInstruction(char *instruction, int n){
@@ -345,13 +346,30 @@ char* leftPad(const char* instruction, char padCharacter, int finalLength) {
     return paddedInstruction;
 }
 
+void writeToFile(char **binInstructionSet, const char* fileName) {
+    FILE *file;
+
+    file = fopen(fileName, "w");
+    if (file == NULL) error("Error in opening out file");
+    printf("Writing to %s ...\n\n", fileName);
+
+    for (int i = 0; i < lineCount; i++) {
+        fprintf(file, "%s\n", binInstructionSet[i]);
+    }
+
+    fclose(file);
+}
+
 int main(int argc, char *argv[]) {
-    if (argc < 2) error("File name not provided");
-    const char *fileName = argv[1];
-    printf("\nAssembling %s...\n\n", fileName);
+    if (argc < 3) error("File names not provided");
+    const char *readFileName = argv[1];
+    const char *writeFileName = argv[2];
+    printf("\nAssembling %s...\n\n", readFileName);
     preInitialize();
-    char **lines = initialize(fileName);
+    char **lines = initialize(readFileName);
     firstPass(lines);
-    secondPass(lines);
+    char **binInstructionSet = secondPass(lines);
+    writeToFile(binInstructionSet, writeFileName);
+    printf("Successfully assembled!\n");
     return 0;
 }
