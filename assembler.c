@@ -23,7 +23,7 @@ unsigned long hash(char *str) {
     return hash % SIZE;
 }
 
-hash_table_item_t *search(char *key, hash_table_item_t* hashTable[]) {
+hash_table_item_t *searchSymbol(char *key, hash_table_item_t* hashTable[]) {
    int hashIndex = hash(key);
 
    while(hashTable[hashIndex] != NULL) {
@@ -37,7 +37,7 @@ hash_table_item_t *search(char *key, hash_table_item_t* hashTable[]) {
    return NULL;        
 }
 
-void insert(char *key, int data, hash_table_item_t* hashTable[]) {
+void insertSymbol(char *key, int data, hash_table_item_t* hashTable[]) {
    int hashIndex = hash(key);
    hash_table_item_t *item = (hash_table_item_t*) malloc(sizeof(hash_table_item_t));
    item->data = data;  
@@ -51,82 +51,110 @@ void insert(char *key, int data, hash_table_item_t* hashTable[]) {
    hashTable[hashIndex] = item;
 }
 
+lookup_table_item_t *searchKeyword(char *key, lookup_table_item_t* hashTable[], int size) {
+   int hashIndex = hash(key);
+
+   while(hashTable[hashIndex] != NULL) {
+      if(hashTable[hashIndex]->key == hashIndex)
+         return hashTable[hashIndex]; 
+			
+      ++hashIndex;
+      hashIndex %= size;
+   }        
+	
+   return NULL;        
+}
+
+void insertKeyword(char *key, int data, lookup_table_item_t* hashTable[], int size) {
+   int hashIndex = hash(key);
+   lookup_table_item_t *item = (lookup_table_item_t*) malloc(sizeof(lookup_table_item_t));
+   item->data = data;  
+   item->key = hashIndex;
+
+   while(hashTable[hashIndex] != NULL) {
+      ++hashIndex;
+      hashIndex %= size;
+   }
+	
+   hashTable[hashIndex] = item;
+}
+
 void preInitialize() {
     // List of possible computations
-    insert("0", 101010, compTable);
-    insert("1", 111111, compTable);
-    insert("-1", 111010, compTable);
-    insert("D", 001100, compTable);
-    insert("A", 110000, compTable);
-    insert("!D", 001101, compTable);
-    insert("!A", 110001, compTable);
-    insert("-D", 001111, compTable);
-    insert("-A", 110011, compTable);
-    insert("D+1", 011111, compTable);
-    insert("A+1", 110111, compTable);
-    insert("D-1", 001110, compTable);
-    insert("A-1", 110010, compTable);
-    insert("D+A", 000010, compTable);
-    insert("D-A", 010011, compTable);
-    insert("A-D", 000111, compTable);
-    insert("D&A", 000000, compTable);
-    insert("D|A", 010101, compTable);
-    insert("M", 1110000, compTable);
-    insert("!M", 1110001, compTable);
-    insert("-M", 1110011, compTable);
-    insert("M+1", 1110111, compTable);
-    insert("M-1", 1110010, compTable);
-    insert("D+M", 1000010, compTable);
-    insert("D-M", 1010011, compTable);
-    insert("M-D", 1000111, compTable);
-    insert("D&M", 1000000, compTable);
-    insert("D|M", 1010101, compTable);
+    insertKeyword("0", 101010, compTable, COMP_TABLE_SIZE);
+    insertKeyword("1", 111111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("-1", 111010, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D", 1100, compTable, COMP_TABLE_SIZE);
+    insertKeyword("A", 110000, compTable, COMP_TABLE_SIZE);
+    insertKeyword("!D", 1101, compTable, COMP_TABLE_SIZE);
+    insertKeyword("!A", 110001, compTable, COMP_TABLE_SIZE);
+    insertKeyword("-D", 1111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("-A", 110011, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D+1", 11111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("A+1", 110111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D-1", 1110, compTable, COMP_TABLE_SIZE);
+    insertKeyword("A-1", 110010, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D+A", 10, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D-A", 10011, compTable, COMP_TABLE_SIZE);
+    insertKeyword("A-D", 111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D&A", 0, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D|A", 10101, compTable, COMP_TABLE_SIZE);
+    insertKeyword("M", 1110000, compTable, COMP_TABLE_SIZE);
+    insertKeyword("!M", 1110001, compTable, COMP_TABLE_SIZE);
+    insertKeyword("-M", 1110011, compTable, COMP_TABLE_SIZE);
+    insertKeyword("M+1", 1110111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("M-1", 1110010, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D+M", 1000010, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D-M", 1010011, compTable, COMP_TABLE_SIZE);
+    insertKeyword("M-D", 1000111, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D&M", 1000000, compTable, COMP_TABLE_SIZE);
+    insertKeyword("D|M", 1010101, compTable, COMP_TABLE_SIZE);
 
     // List of possible destinations
-    insert("null", 000, destTable);
-    insert("M", 001, destTable);
-    insert("D", 010, destTable);
-    insert("MD", 011, destTable);
-    insert("A", 100, destTable);
-    insert("AM", 101, destTable);
-    insert("AD", 110, destTable);
-    insert("AMD", 111, destTable);
+    insertKeyword("null", 0, destTable, DEST_TABLE_SIZE);
+    insertKeyword("M", 1, destTable, DEST_TABLE_SIZE);
+    insertKeyword("D", 10, destTable, DEST_TABLE_SIZE);
+    insertKeyword("MD", 11, destTable, DEST_TABLE_SIZE);
+    insertKeyword("A", 100, destTable, DEST_TABLE_SIZE);
+    insertKeyword("AM", 101, destTable, DEST_TABLE_SIZE);
+    insertKeyword("AD", 110, destTable, DEST_TABLE_SIZE);
+    insertKeyword("AMD", 111, destTable, DEST_TABLE_SIZE);
 
     // List of possible jumps
-    insert("null", 000, jumpTable);
-    insert("JGT", 001, jumpTable);
-    insert("JEQ", 010, jumpTable);
-    insert("JGE", 011, jumpTable);
-    insert("JLT", 100, jumpTable);
-    insert("JNE", 101, jumpTable);
-    insert("JLE", 110, jumpTable);
-    insert("JMP", 111, jumpTable);
+    insertKeyword("null", 0, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JGT", 1, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JEQ", 10, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JGE", 11, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JLT", 100, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JNE", 101, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JLE", 110, jumpTable, JUMP_TABLE_SIZE);
+    insertKeyword("JMP", 111, jumpTable, JUMP_TABLE_SIZE);
 }
 
 char** initialize(const char *fileName) {
-    insert("R0", 0, symbolTable);
-    insert("R1", 1, symbolTable);
-    insert("R2", 2, symbolTable);
-    insert("R3", 3, symbolTable);
-    insert("R4", 4, symbolTable);
-    insert("R5", 5, symbolTable);
-    insert("R6", 6, symbolTable);
-    insert("R7", 7, symbolTable);
-    insert("R8", 8, symbolTable);
-    insert("R9", 9, symbolTable);
-    insert("R10", 10, symbolTable);
-    insert("R11", 11, symbolTable);
-    insert("R12", 12, symbolTable);
-    insert("R13", 13, symbolTable);
-    insert("R14", 14, symbolTable);
-    insert("R15", 15, symbolTable);
-    insert("SCREEN", 16384, symbolTable);
-    insert("KBD", 24576, symbolTable);
-    insert("SP", 0, symbolTable);
-    insert("LCL", 1, symbolTable);
-    insert("ARG", 2, symbolTable);
-    insert("THIS", 3, symbolTable);
-    insert("THAT", 4, symbolTable);
+    insertSymbol("R0", 0, symbolTable);
+    insertSymbol("R1", 1, symbolTable);
+    insertSymbol("R2", 2, symbolTable);
+    insertSymbol("R3", 3, symbolTable);
+    insertSymbol("R4", 4, symbolTable);
+    insertSymbol("R5", 5, symbolTable);
+    insertSymbol("R6", 6, symbolTable);
+    insertSymbol("R7", 7, symbolTable);
+    insertSymbol("R8", 8, symbolTable);
+    insertSymbol("R9", 9, symbolTable);
+    insertSymbol("R10", 10, symbolTable);
+    insertSymbol("R11", 11, symbolTable);
+    insertSymbol("R12", 12, symbolTable);
+    insertSymbol("R13", 13, symbolTable);
+    insertSymbol("R14", 14, symbolTable);
+    insertSymbol("R15", 15, symbolTable);
+    insertSymbol("SCREEN", 16384, symbolTable);
+    insertSymbol("KBD", 24576, symbolTable);
+    insertSymbol("SP", 0, symbolTable);
+    insertSymbol("LCL", 1, symbolTable);
+    insertSymbol("ARG", 2, symbolTable);
+    insertSymbol("THIS", 3, symbolTable);
+    insertSymbol("THAT", 4, symbolTable);
 
     FILE *file = fopen(fileName, "r");
     char **lines;
@@ -169,7 +197,7 @@ void firstPass(char **lines) {
             }
             // Case "()"
             if (j == 1) error("Enter a valid label hash");
-            insert(hash, i - hashCount, symbolTable);
+            insertSymbol(hash, i - hashCount, symbolTable);
             hashCount++;
         }
     }
@@ -197,10 +225,10 @@ char* translateAInstruction(char *instruction, int n){
     if (isNumeric(instruction)) {
         binNum = atoi(instruction);
         binNum = decimal2Binary(binNum);
-    } else if ((symbol = search(instruction, symbolTable)) != NULL) {
+    } else if ((symbol = searchSymbol(instruction, symbolTable)) != NULL) {
         binNum = decimal2Binary(symbol->data);
     } else {
-        insert(instruction, n, symbolTable);
+        insertSymbol(instruction, n, symbolTable);
         binNum = decimal2Binary(n);
     }
 
@@ -245,23 +273,23 @@ char* translateCInstruction(char *instruction) {
     strcpy(jump, semicolon + 1);
     jump[strcspn(jump, "\n")] = '\0';
 
-    hash_table_item_t *destItem = search(dest, destTable);
-    hash_table_item_t *compItem = search(comp, compTable);
-    hash_table_item_t *jumpItem = search(jump, jumpTable);
+    lookup_table_item_t *destItem = searchKeyword(dest, destTable, DEST_TABLE_SIZE);
+    lookup_table_item_t *compItem = searchKeyword(comp, compTable, COMP_TABLE_SIZE);
+    lookup_table_item_t *jumpItem = searchKeyword(jump, jumpTable, JUMP_TABLE_SIZE);
 
     if (destItem == NULL) error("Syntax error. Destination statement not found!");
     if (compItem == NULL) error("Syntax error. Computation statement not found!");
     if (jumpItem == NULL) error("Syntax error. Jump statement not found!");
 
     int binDest = destItem->data;
-    int compDest = compItem->data;
-    int jumpDest = jumpItem->data;
+    int binComp = compItem->data;
+    int binJump = jumpItem->data;
 
     char binDestStr[MAX_LINE_LENGTH], binCompStr[MAX_LINE_LENGTH], binJumpStr[MAX_LINE_LENGTH];
 
     sprintf(binDestStr, "%d", binDest);
-    sprintf(binCompStr, "%d", compDest);
-    sprintf(binJumpStr, "%d", jumpDest);
+    sprintf(binCompStr, "%d", binComp);
+    sprintf(binJumpStr, "%d", binJump);
 
     char *binDestPtr = leftPad(binDestStr, '0', 3);
     char *binCompPtr = leftPad(binCompStr, '0', 7);
@@ -277,7 +305,6 @@ char* translateCInstruction(char *instruction) {
 
     binInstruction = leftPad(binInstruction, '1', 16);
     instruction = binInstruction;
-    // free(binInstruction);
     return instruction;
 }
 
@@ -304,18 +331,18 @@ bool isNumeric(const char *str) {
     return true;
 }
 
-char* leftPad(char *instruction, char pad, int finalLength) {
-    char *newInstruction = malloc(finalLength * sizeof(char));
-    int length = strlen(instruction);
-    for (int i = 0; i < finalLength; i++) {
-        if (i < finalLength - length)
-            newInstruction[i] = pad;
-        else
-            newInstruction[i] = instruction[i - (finalLength - length)];
-    }
-    instruction = newInstruction;
-    free(newInstruction);
-    return instruction;
+char* leftPad(const char* instruction, char padCharacter, int finalLength) {
+    int instructionLength = strlen(instruction);
+
+    if (instructionLength >= finalLength) return strdup(instruction);
+
+    int paddingLength = finalLength - instructionLength;
+    char* paddedInstruction = malloc((finalLength + 1) * sizeof(char)); // +1 for the null terminator
+
+    memset(paddedInstruction, padCharacter, paddingLength);
+    strcpy(paddedInstruction + paddingLength, instruction);
+
+    return paddedInstruction;
 }
 
 int main(int argc, char *argv[]) {
